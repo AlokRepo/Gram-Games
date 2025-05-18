@@ -2,10 +2,8 @@
 'use client';
 
 import GameCard from '@/components/platform/GameCard';
-import RelaxationTracker from '@/components/platform/RelaxationTracker';
 import AmbientSoundControls from '@/components/platform/AmbientSoundControls';
 import { PLATFORM_GAMES, PLATFORM_ICON, PLATFORM_TITLE, PLATFORM_SUBTITLE } from '@/lib/gameData';
-import { Separator } from '@/components/ui/separator';
 
 export default function PlatformHomePage() {
   const PlatformIcon = PLATFORM_ICON;
@@ -24,7 +22,6 @@ export default function PlatformHomePage() {
 
       <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-8">
         <aside className="md:col-span-1 flex flex-col gap-6">
-          <RelaxationTracker />
           <AmbientSoundControls />
         </aside>
 
