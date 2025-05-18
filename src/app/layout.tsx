@@ -1,7 +1,10 @@
+
 import type { Metadata } from 'next';
 import { Nunito } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
+import { PLATFORM_TITLE, PLATFORM_SUBTITLE } from '@/lib/gameData';
+
 
 const nunito = Nunito({
   subsets: ['latin'],
@@ -10,8 +13,8 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: 'Bubble Popper',
-  description: 'A relaxing bubble popping game.',
+  title: PLATFORM_TITLE,
+  description: PLATFORM_SUBTITLE,
 };
 
 export default function RootLayout({
@@ -21,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${nunito.variable} font-sans antialiased`}>
+      <body className={`${nunito.variable} font-sans antialiased bg-background text-foreground`}>
         {children}
         <Toaster />
       </body>
