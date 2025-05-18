@@ -74,20 +74,26 @@ export function useMeltSounds() {
       console.warn("Melt sound audio not ready or context not running.");
       return;
     }
-
+  
     const effect = soundEffects[materialSoundKey] || soundEffects.melt_ice;
-
+  
     try {
-      const now = Tone.now(); // Get current time once
+      // Add a small time offset to prevent scheduling at the exact same time
+      const now = Tone.now();
+      const scheduleTime = now + 0.001; // Add a small offset (e.g., 1ms)
+  
       if (effect.type === 'noise' && synths.current.noise) {
         synths.current.noise.volume.value = effect.volume;
-        synths.current.noise.triggerAttackRelease(effect.duration, now);
+        // Use the calculated scheduleTime
+        synths.current.noise.triggerAttackRelease(effect.duration, scheduleTime);
       } else if (effect.type === 'synth' && synths.current.synth) {
         synths.current.synth.volume.value = effect.volume;
-        synths.current.synth.triggerAttackRelease(effect.note, effect.duration, now);
+        // Use the calculated scheduleTime
+        synths.current.synth.triggerAttackRelease(effect.note, effect.duration, scheduleTime);
       } else if (effect.type === 'pluck' && synths.current.pluck) {
          synths.current.pluck.volume.value = effect.volume;
-         synths.current.pluck.triggerAttackRelease(effect.note, now); // PluckSynth duration is inherent
+         // Use the calculated scheduleTime
+         synths.current.pluck.triggerAttackRelease(effect.note, scheduleTime); // PluckSynth duration is inherent
       }
     } catch (e) {
       console.error("Error playing melt sound:", e);
