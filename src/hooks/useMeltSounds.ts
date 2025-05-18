@@ -80,7 +80,8 @@ export function useMeltSounds() {
     try {
       // Add a small time offset to prevent scheduling at the exact same time
       const now = Tone.now();
-      const scheduleTime = now + 0.001; // Add a small offset (e.g., 1ms)
+      // Increased offset from 0.001 to 0.005
+      const scheduleTime = now + 0.005; 
   
       if (effect.type === 'noise' && synths.current.noise) {
         synths.current.noise.volume.value = effect.volume;
@@ -102,4 +103,3 @@ export function useMeltSounds() {
 
   return { playMeltSound, initializeAudio };
 }
-
