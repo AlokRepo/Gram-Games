@@ -8,25 +8,25 @@ body {
 
 @layer base {
   :root {
-    --background: 208 100% 97%; /* #F0F8FF AliceBlue */
-    --foreground: 222 21% 30%; /* #334155 Slate 700 */
-    --card: 208 100% 97%;
-    --card-foreground: 222 21% 30%;
-    --popover: 208 100% 97%;
-    --popover-foreground: 222 21% 30%;
-    --primary: 197 71% 73%; /* #87CEEB SkyBlue */
-    --primary-foreground: 209 79% 28%; /* #0F4C81 Dark Blue for text on primary */
-    --secondary: 210 30% 90%; /* Lighter Periwinkle for secondary elements */
-    --secondary-foreground: 209 79% 28%;
-    --muted: 210 30% 90%;
-    --muted-foreground: 222 21% 45%; /* Slightly lighter than main foreground */
-    --accent: 210 29% 71%; /* #9CB4CC Periwinkle */
-    --accent-foreground: 209 79% 28%; /* Dark Blue for text on accent */
+    --background: 220 60% 97%; /* Light Lavender White */
+    --foreground: 230 25% 25%; /* Deep Indigo */
+    --card: 220 60% 97%; /* Uses background color */
+    --card-foreground: 230 25% 25%; /* Uses foreground color */
+    --popover: 220 60% 97%;
+    --popover-foreground: 230 25% 25%;
+    --primary: 250 65% 70%; /* Soft Lavender */
+    --primary-foreground: 250 60% 20%; /* Dark Purple for text on primary */
+    --secondary: 230 50% 90%; /* Lighter Soft Lavender-Blue */
+    --secondary-foreground: 250 60% 20%;
+    --muted: 230 50% 90%;
+    --muted-foreground: 230 25% 45%; /* Slightly lighter than main foreground */
+    --accent: 200 70% 75%; /* Gentle Sky Blue */
+    --accent-foreground: 200 70% 25%; /* Dark Blue for text on accent */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 208 30% 88%; /* Softer border */
-    --input: 208 30% 92%; /* Slightly distinct input background */
-    --ring: 197 71% 73%; /* SkyBlue for focus rings */
+    --border: 220 50% 88%; /* Softer border */
+    --input: 220 50% 92%; /* Slightly distinct input background */
+    --ring: 250 65% 70%; /* Soft Lavender for focus rings */
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -43,25 +43,25 @@ body {
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
   .dark {
-    --background: 222 47% 11%; /* Dark blue-gray */
-    --foreground: 210 40% 98%; /* Light gray */
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 197 71% 63%; /* Slightly desaturated SkyBlue for dark mode */
-    --primary-foreground: 209 79% 20%; /* Darker blue for text on primary */
-    --secondary: 210 30% 20%; /* Darker Periwinkle */
-    --secondary-foreground: 210 40% 98%;
-    --muted: 210 30% 20%;
-    --muted-foreground: 210 40% 70%;
-    --accent: 210 29% 61%; /* Slightly desaturated Periwinkle for dark mode */
-    --accent-foreground: 209 79% 20%;
+    --background: 230 30% 15%; /* Deep Indigo/Purple */
+    --foreground: 220 40% 95%; /* Off-white, slightly cool */
+    --card: 230 30% 15%;
+    --card-foreground: 220 40% 95%;
+    --popover: 230 30% 15%;
+    --popover-foreground: 220 40% 95%;
+    --primary: 250 60% 65%; /* Desaturated Lavender */
+    --primary-foreground: 250 60% 15%; /* Very Dark Purple for text on primary */
+    --secondary: 230 25% 25%; /* Darker Muted Lavender-Blue */
+    --secondary-foreground: 220 40% 90%;
+    --muted: 230 25% 25%;
+    --muted-foreground: 220 40% 70%;
+    --accent: 200 65% 70%; /* Muted Sky Blue */
+    --accent-foreground: 200 60% 20%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 210 30% 25%;
-    --input: 210 30% 22%;
-    --ring: 197 71% 63%;
+    --border: 230 25% 30%;
+    --input: 230 25% 28%;
+    --ring: 250 60% 65%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
