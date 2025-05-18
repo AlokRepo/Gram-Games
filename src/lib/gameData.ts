@@ -1,7 +1,7 @@
 
 'use client';
 import type { LucideIcon } from 'lucide-react';
-import { Droplets, CloudDrizzle, Wind, VolumeX, Brain } from 'lucide-react'; // Added Brain for platform icon
+import { Droplets, CloudDrizzle, Wind, VolumeX, Brain, Snowflake, Palette } from 'lucide-react'; // Added Brain for platform icon, Snowflake for Melt Away
 
 export interface GameMeta {
   id: string;
@@ -25,6 +25,16 @@ export const PLATFORM_GAMES: GameMeta[] = [
     color: 'bg-sky-100 dark:bg-sky-800',
     dataAiHint: 'bubbles water',
   },
+  {
+    id: 'melt-away',
+    name: 'Melt Away',
+    description: 'Gently melt away sculptures to find peace.',
+    longDescription: 'Drag your finger or mouse across the sculpture to watch it slowly melt and disappear. A soothing experience designed for relaxation.',
+    icon: Snowflake, // Using Snowflake for now, can be themed later
+    route: '/games/melt-away',
+    color: 'bg-blue-100 dark:bg-blue-800',
+    dataAiHint: 'ice melting',
+  }
   // Example of how to add more games in the future:
   // {
   //   id: 'zen-stones',
