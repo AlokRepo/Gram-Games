@@ -42,20 +42,38 @@ const MeltAwayPage: React.FC = () => {
   useEffect(() => {
     // Reset melted state when sculpture changes
     setMeltedState(currentSculpture.grid.map(row => row.map(() => false)));
-    setIsComplete(false);
-    setMeltCount(0);
+    // meltCount will be reset by the effect below that derives it from meltedState
+    setIsComplete(false); 
     // Update material if sculpture has a different default
     const newSculptureDefaultMaterial = MATERIALS.find(m => m.id === currentSculpture.defaultMaterialId) || currentMaterial;
     setCurrentMaterial(newSculptureDefaultMaterial);
-  }, [currentSculpture]);
+  }, [currentSculpture, setCurrentMaterial]); // Added setCurrentMaterial to dep array as it's used
+
+  // Derive meltCount from meltedState and currentSculpture
+  useEffect(() => {
+    let count = 0;
+    if (currentSculpture && meltedState && meltedState.length === currentSculpture.grid.length) {
+      for (let r = 0; r < currentSculpture.grid.length; r++) {
+        if (currentSculpture.grid[r] && meltedState[r] && meltedState[r].length === currentSculpture.grid[r].length) {
+          for (let c = 0; c < currentSculpture.grid[r].length; c++) {
+            if (currentSculpture.grid[r][c] && meltedState[r][c]) { // If it's a solid part AND it's melted
+              count++;
+            }
+          }
+        }
+      }
+    }
+    setMeltCount(count);
+  }, [meltedState, currentSculpture]);
+
 
   const handleCellMelt = useCallback((rowIndex: number, colIndex: number) => {
     setMeltedState(prev => {
       const newState = prev.map(r => [...r]);
-      if (newState[rowIndex][colIndex] === false) { // only melt if not already melted
+      if (newState[rowIndex]?.[colIndex] === false) { // only melt if not already melted and exists
         newState[rowIndex][colIndex] = true;
-        setMeltCount(count => count + 1);
-        playMeltSound(currentMaterial.sound as any); // Type assertion for sound key
+        // meltCount is now derived, no longer incremented here
+        playMeltSound(currentMaterial.sound as any);
       }
       return newState;
     });
@@ -80,9 +98,9 @@ const MeltAwayPage: React.FC = () => {
   };
 
   const resetSculpture = () => {
-    setMeltedState(currentSculpture.grid.map(row => row.map(() => false)));
+    // Setting the sculpture will trigger the useEffect to reset meltCount and meltedState
+    setCurrentSculpture(prev => ({...prev})); // Force re-trigger of sculpture change effect
     setIsComplete(false);
-    setMeltCount(0);
   };
 
   return (
@@ -154,7 +172,7 @@ const MeltAwayPage: React.FC = () => {
            {!isComplete && (
             <p className={cn(
               "text-sm text-muted-foreground transition-opacity duration-500",
-              meltCount > 0 ? "opacity-0" : "opacity-100"
+              (meltCount > 0 && totalSolidCells > 0) ? "opacity-0" : "opacity-100" // only hide if melting has started on a non-empty sculpture
             )}>
               Drag your mouse or finger to start melting.
             </p>
