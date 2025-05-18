@@ -36,7 +36,9 @@ export function useMeltSounds() {
 
       synths.current.synth = new Tone.Synth({
         oscillator: { type: 'sine' },
-        envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.2 },
+        // Changed envelope: sustain: 0 and shorter release to make it more percussive
+        // and less prone to re-triggering issues with the internal oscillator state.
+        envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 }, 
       }).connect(gain);
       
       synths.current.pluck = new Tone.PluckSynth({
@@ -76,15 +78,16 @@ export function useMeltSounds() {
     const effect = soundEffects[materialSoundKey] || soundEffects.melt_ice;
 
     try {
+      const now = Tone.now(); // Get current time once
       if (effect.type === 'noise' && synths.current.noise) {
         synths.current.noise.volume.value = effect.volume;
-        synths.current.noise.triggerAttackRelease(effect.duration);
+        synths.current.noise.triggerAttackRelease(effect.duration, now);
       } else if (effect.type === 'synth' && synths.current.synth) {
         synths.current.synth.volume.value = effect.volume;
-        synths.current.synth.triggerAttackRelease(effect.note, effect.duration);
+        synths.current.synth.triggerAttackRelease(effect.note, effect.duration, now);
       } else if (effect.type === 'pluck' && synths.current.pluck) {
          synths.current.pluck.volume.value = effect.volume;
-         synths.current.pluck.triggerAttackRelease(effect.note, effect.duration);
+         synths.current.pluck.triggerAttackRelease(effect.note, now); // PluckSynth duration is inherent
       }
     } catch (e) {
       console.error("Error playing melt sound:", e);
@@ -93,3 +96,4 @@ export function useMeltSounds() {
 
   return { playMeltSound, initializeAudio };
 }
+
