@@ -43,7 +43,7 @@ const SculptureGrid: React.FC<SculptureGridProps> = ({
   return (
     <div
       className={cn(
-        "grid gap-0.5 p-1 rounded-md shadow-lg max-w-md w-full mx-auto bg-slate-500/10 touch-none select-none"
+        "grid gap-0.5 p-1 rounded-md shadow-lg max-w-xl w-full mx-auto bg-slate-500/10 touch-none select-none" // Changed from max-w-md
       )}
       style={{ gridTemplateColumns }}
       onPointerDown={handlePointerDown}

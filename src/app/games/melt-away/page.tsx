@@ -180,7 +180,7 @@ const MeltAwayPage: React.FC = () => {
             </div>
           )}
 
-          <div className="relative w-full aspect-square max-w-md flex items-center justify-center">
+          <div className="relative w-full aspect-square max-w-xl flex items-center justify-center"> {/* Changed from max-w-md */}
             {!isComplete ? (
               <SculptureGrid
                 sculpture={currentSculpture}

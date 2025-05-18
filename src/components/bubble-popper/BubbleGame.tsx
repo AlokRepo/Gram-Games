@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -9,10 +10,10 @@ import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
 import { useToast } from "@/hooks/use-toast";
 
-const GAME_AREA_HEIGHT_PX = 500; // Fixed height for the game area in pixels
+const GAME_AREA_HEIGHT_PX = 600; // Increased from 500
 const BUBBLE_MIN_SIZE = 25;
 const BUBBLE_MAX_SIZE = 70;
-const MAX_BUBBLES = 15;
+const MAX_BUBBLES = 20; // Slightly increased max bubbles for larger area
 const BASE_POINTS_PER_BUBBLE = 10;
 
 type BubbleType = 'normal' | 'fast' | 'slow' | 'large' | 'small';
@@ -240,7 +241,7 @@ const BubbleGame: React.FC = () => {
       <Card 
         ref={gameAreaRef} 
         className={cn(
-          "relative w-full max-w-xl mt-4 shadow-2xl game-area overflow-hidden rounded-xl border-4 border-primary/30",
+          "relative w-full max-w-2xl mt-4 shadow-2xl game-area overflow-hidden rounded-xl border-4 border-primary/30", // Changed from max-w-xl
           currentTheme.backgroundClasses
         )}
         style={{ height: `${GAME_AREA_HEIGHT_PX}px` }}
