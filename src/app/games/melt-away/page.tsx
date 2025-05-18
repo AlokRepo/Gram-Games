@@ -7,23 +7,28 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ArrowLeft, CheckCircle, Zap, RotateCcw, Sparkles as SparklesIcon } from 'lucide-react';
 import SculptureGrid from '@/components/melt-away/SculptureGrid';
-import { MATERIALS, SCULPTURES, getDefaultSculpture, getDefaultMaterial } from '@/lib/meltAwayData';
+import { MATERIALS, SCULPTURES, getDefaultSculpture, getDefaultMaterial, initializeSculptureData, generateSquareGrid } from '@/lib/meltAwayData';
 import type { Sculpture, Material } from '@/lib/meltAwayData';
 import { useMeltSounds } from '@/hooks/useMeltSounds';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Label } from "@/components/ui/label";
 
 const MeltAwayPage: React.FC = () => {
-  const [currentSculpture, setCurrentSculpture] = useState<Sculpture>(getDefaultSculpture());
+  const initialGridSize = 8;
+  const [gridSize, setGridSize] = useState<number>(initialGridSize);
+  
+  const [currentSculpture, setCurrentSculpture] = useState<Sculpture>(
+    initializeSculptureData(getDefaultSculpture().id, initialGridSize)
+  );
   const [currentMaterial, setCurrentMaterial] = useState<Material>(
-     MATERIALS.find(m => m.id === getDefaultSculpture().defaultMaterialId) || getDefaultMaterial()
+     MATERIALS.find(m => m.id === currentSculpture.defaultMaterialId) || getDefaultMaterial()
   );
   
-  const initialMeltedState = useMemo(() => 
-    currentSculpture.grid.map(row => row.map(() => false)),
-    [currentSculpture]
+  const [meltedState, setMeltedState] = useState<boolean[][]>(
+    currentSculpture.grid.map(row => row.map(() => false))
   );
-  const [meltedState, setMeltedState] = useState<boolean[][]>(initialMeltedState);
   const [isComplete, setIsComplete] = useState(false);
   const [meltCount, setMeltCount] = useState(0);
 
@@ -35,28 +40,29 @@ const MeltAwayPage: React.FC = () => {
   }, [currentSculpture]);
 
   useEffect(() => {
-    // Initialize audio on component mount or first interaction
     initializeMeltAudio();
   }, [initializeMeltAudio]);
 
+  // Effect to reset melted state, completion, and material when currentSculpture definition changes
   useEffect(() => {
-    // Reset melted state when sculpture changes
     setMeltedState(currentSculpture.grid.map(row => row.map(() => false)));
-    // meltCount will be reset by the effect below that derives it from meltedState
     setIsComplete(false); 
-    // Update material if sculpture has a different default
+    
     const newSculptureDefaultMaterial = MATERIALS.find(m => m.id === currentSculpture.defaultMaterialId) || currentMaterial;
-    setCurrentMaterial(newSculptureDefaultMaterial);
-  }, [currentSculpture, setCurrentMaterial]); // Added setCurrentMaterial to dep array as it's used
+    if (newSculptureDefaultMaterial.id !== currentMaterial.id) {
+      setCurrentMaterial(newSculptureDefaultMaterial);
+    }
+  }, [currentSculpture]);
 
-  // Derive meltCount from meltedState and currentSculpture
+
+  // Effect to derive meltCount from meltedState and currentSculpture
   useEffect(() => {
     let count = 0;
     if (currentSculpture && meltedState && meltedState.length === currentSculpture.grid.length) {
       for (let r = 0; r < currentSculpture.grid.length; r++) {
         if (currentSculpture.grid[r] && meltedState[r] && meltedState[r].length === currentSculpture.grid[r].length) {
           for (let c = 0; c < currentSculpture.grid[r].length; c++) {
-            if (currentSculpture.grid[r][c] && meltedState[r][c]) { // If it's a solid part AND it's melted
+            if (currentSculpture.grid[r][c] && meltedState[r][c]) {
               count++;
             }
           }
@@ -70,9 +76,8 @@ const MeltAwayPage: React.FC = () => {
   const handleCellMelt = useCallback((rowIndex: number, colIndex: number) => {
     setMeltedState(prev => {
       const newState = prev.map(r => [...r]);
-      if (newState[rowIndex]?.[colIndex] === false) { // only melt if not already melted and exists
+      if (newState[rowIndex]?.[colIndex] === false) {
         newState[rowIndex][colIndex] = true;
-        // meltCount is now derived, no longer incremented here
         playMeltSound(currentMaterial.sound as any);
       }
       return newState;
@@ -88,8 +93,16 @@ const MeltAwayPage: React.FC = () => {
   }, [meltCount, totalSolidCells]);
 
   const handleSculptureChange = (sculptureId: string) => {
-    const newSculpture = SCULPTURES.find(s => s.id === sculptureId) || getDefaultSculpture();
+    const newSculpture = initializeSculptureData(sculptureId, gridSize);
     setCurrentSculpture(newSculpture);
+  };
+  
+  const handleGridSizeChange = (value: number[]) => {
+    const newSize = value[0];
+    setGridSize(newSize);
+    if (currentSculpture.id === 'dynamic-block') {
+      setCurrentSculpture(prev => ({ ...prev, grid: generateSquareGrid(newSize) }));
+    }
   };
 
   const handleMaterialChange = (materialId: string) => {
@@ -98,8 +111,8 @@ const MeltAwayPage: React.FC = () => {
   };
 
   const resetSculpture = () => {
-    // Setting the sculpture will trigger the useEffect to reset meltCount and meltedState
-    setCurrentSculpture(prev => ({...prev})); // Force re-trigger of sculpture change effect
+    // Re-initialize current sculpture to trigger useEffects for reset
+    setCurrentSculpture(prev => initializeSculptureData(prev.id, gridSize));
     setIsComplete(false);
   };
 
@@ -123,7 +136,7 @@ const MeltAwayPage: React.FC = () => {
         <CardContent className="flex flex-col items-center gap-6">
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
             <div className="flex-1 min-w-[150px]">
-              <label htmlFor="sculpture-select" className="text-sm font-medium text-foreground/80 mb-1 block">Sculpture:</label>
+              <Label htmlFor="sculpture-select" className="text-sm font-medium text-foreground/80 mb-1 block">Sculpture:</Label>
               <Select value={currentSculpture.id} onValueChange={handleSculptureChange}>
                 <SelectTrigger id="sculpture-select" className="w-full">
                   <SelectValue placeholder="Select sculpture" />
@@ -136,7 +149,7 @@ const MeltAwayPage: React.FC = () => {
               </Select>
             </div>
             <div className="flex-1 min-w-[150px]">
-              <label htmlFor="material-select" className="text-sm font-medium text-foreground/80 mb-1 block">Material:</label>
+              <Label htmlFor="material-select" className="text-sm font-medium text-foreground/80 mb-1 block">Material:</Label>
               <Select value={currentMaterial.id} onValueChange={handleMaterialChange}>
                 <SelectTrigger id="material-select" className="w-full">
                   <SelectValue placeholder="Select material" />
@@ -149,6 +162,23 @@ const MeltAwayPage: React.FC = () => {
               </Select>
             </div>
           </div>
+
+          {currentSculpture.id === 'dynamic-block' && (
+            <div className="w-full max-w-xs space-y-2 px-4">
+              <Label htmlFor="grid-size-slider" className="text-sm font-medium text-foreground/80">
+                Block Size: {gridSize}x{gridSize} ({gridSize * gridSize} blocks)
+              </Label>
+              <Slider
+                id="grid-size-slider"
+                defaultValue={[gridSize]}
+                min={3}
+                max={32} 
+                step={1}
+                onValueChange={handleGridSizeChange}
+                className="w-full"
+              />
+            </div>
+          )}
 
           <div className="relative w-full aspect-square max-w-md flex items-center justify-center">
             {!isComplete ? (
@@ -172,13 +202,17 @@ const MeltAwayPage: React.FC = () => {
            {!isComplete && (
             <p className={cn(
               "text-sm text-muted-foreground transition-opacity duration-500",
-              (meltCount > 0 && totalSolidCells > 0) ? "opacity-0" : "opacity-100" // only hide if melting has started on a non-empty sculpture
+              (meltCount > 0 && totalSolidCells > 0 && totalSolidCells !== meltCount) ? "opacity-0" : "opacity-100"
             )}>
               Drag your mouse or finger to start melting.
             </p>
           )}
           {isComplete && (
-             <Button onClick={() => handleSculptureChange(SCULPTURES[(SCULPTURES.findIndex(s => s.id === currentSculpture.id) + 1) % SCULPTURES.length].id)} className="mt-4">
+             <Button onClick={() => {
+                const currentIndex = SCULPTURES.findIndex(s => s.id === currentSculpture.id);
+                const nextIndex = (currentIndex + 1) % SCULPTURES.length;
+                handleSculptureChange(SCULPTURES[nextIndex].id);
+             }} className="mt-4">
                 Next Sculpture <Zap className="ml-2 h-4 w-4"/>
             </Button>
           )}

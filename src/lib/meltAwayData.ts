@@ -42,7 +42,7 @@ export const MATERIALS: Material[] = [
   }
 ];
 
-const simpleSquare = (size: number, fill: boolean = true): boolean[][] => {
+export const generateSquareGrid = (size: number, fill: boolean = true): boolean[][] => {
   return Array(size).fill(null).map(() => Array(size).fill(fill));
 };
 
@@ -60,13 +60,13 @@ export const SCULPTURES: Sculpture[] = [
   {
     id: 'small-block',
     name: 'Small Block',
-    grid: simpleSquare(5),
+    grid: generateSquareGrid(5),
     defaultMaterialId: 'ice',
   },
   {
     id: 'medium-block',
     name: 'Solid Cube',
-    grid: simpleSquare(8),
+    grid: generateSquareGrid(8),
     defaultMaterialId: 'ice',
   },
   {
@@ -80,8 +80,34 @@ export const SCULPTURES: Sculpture[] = [
     name: 'Bar',
     grid: Array(3).fill(null).map(() => Array(10).fill(true)),
     defaultMaterialId: 'wax',
+  },
+  {
+    id: 'dynamic-block',
+    name: 'Custom Block',
+    grid: [], // Will be generated dynamically
+    defaultMaterialId: 'ice',
   }
 ];
 
-export const getDefaultMaterial = (): Material => MATERIALS.find(m => m.id === SCULPTURES[0].defaultMaterialId) || MATERIALS[0];
-export const getDefaultSculpture = (): Sculpture => SCULPTURES[0];
+export const getDefaultSculpture = (): Sculpture => {
+  // Ensure the default sculpture is not the dynamic one for initial setup ease
+  const defaultStaticSculpture = SCULPTURES.find(s => s.id === 'small-block') || SCULPTURES[0];
+  if (defaultStaticSculpture.id === 'dynamic-block' && SCULPTURES.length > 1) {
+    return SCULPTURES.find(s => s.id !== 'dynamic-block') || SCULPTURES[0]; // Find first non-dynamic
+  }
+  return defaultStaticSculpture;
+}
+
+export const initializeSculptureData = (sculptureId: string, gridSize: number): Sculpture => {
+  const baseSculpture = SCULPTURES.find(s => s.id === sculptureId) || getDefaultSculpture();
+  if (baseSculpture.id === 'dynamic-block') {
+    return { ...baseSculpture, grid: generateSquareGrid(gridSize) };
+  }
+  return { ...baseSculpture }; // Return a copy to avoid accidental mutation of SCULPTURES array
+};
+
+
+export const getDefaultMaterial = (): Material => {
+  const defaultSculpture = getDefaultSculpture();
+  return MATERIALS.find(m => m.id === defaultSculpture.defaultMaterialId) || MATERIALS[0];
+};
