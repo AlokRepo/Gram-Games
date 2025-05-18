@@ -1,4 +1,4 @@
-# Firebase Studio
+# Gram Games
 
 This is a NextJS starter in Firebase Studio.
 
